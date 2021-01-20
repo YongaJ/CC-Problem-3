@@ -1,0 +1,104 @@
+﻿@model IEnumerable<CCProblem3.Models.ProductModel>
+
+@{
+    ViewBag.Title = "Stock Available:";
+    int count = 0;
+}
+
+<h2>Select Store</h2>
+
+<form method="POST" action="@Url.Action("ViewSupplierStock", "Order")">
+    <select name="supplieID" id="SupplierID" style="margin-bottom:25px" class="form-select">
+        <option value="5">Shoprite</option>
+        <option value="6">Cherckers Hyper</option>
+        <option value="7">Pick n Pay</option>
+        <option value="8">Woolworths</option>
+        <option value="9">Boxer Superstore</option>
+        <option value="10"> Goal </option>
+    </select>
+
+
+    <br />
+    <button type="submit" class="btn btn-info">View Stock</button>
+</form>
+<h2>Available Stock:</h2>
+
+
+<form method="POST" action="@Url.Action("AddOrder", "Order")" id="form">
+    <table class="table">
+        <tr>
+
+            <th>
+                @Html.DisplayNameFor(model => model.Description)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Price)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Volume)
+            </th>
+            <th>Place Order?</th>
+        </tr>
+
+        @foreach (var item in Model)
+        {
+            <tr >
+
+                <td>
+                    @Html.DisplayFor(modelItem => item.Description)
+                    <input type="hidden" name="newList.Description[]" value="@item.Description" />
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Price)
+                    <input type="hidden" name="newList.Price[]"  value="@item.Price" />
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Volume)
+                    <input type="hidden" name="newList.Volume[]"  value="@item.Volume" />
+                </td>
+                <td>
+                    @if (item.Ordered == 0)
+                    {
+                        <input type="checkbox"  name="newList.ProdId[]" value="@item.ProdId">
+                    }
+                </td>
+            </tr>
+            count++;
+        }
+
+    </table>
+
+
+    @if (Model.Count() > 0)
+    {
+        <button onclick="doThis();" @*type="submit"*@ class="btn btn-info">Add Order(s)</button>
+    }
+
+
+</form>
+
+    @*</form>*@
+
+<script>
+    function doThis() {
+
+        var test = $("#form").serialize();
+
+        var nw = JSON.stringify(test);
+
+        console.log(nw);
+
+        $.ajax('/Order/AddOrder',
+            {
+                data: test,
+                method: "POST",
+                beforeSend: function (xhr) {
+                    
+                },
+                success: function (data, status, xhr) {
+
+                }
+            });
+
+    }
+</script>
